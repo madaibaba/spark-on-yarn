@@ -28,6 +28,6 @@ sudo ./start-container.sh
 ##### 3.2 Start six Container as below (one master and five slaves)
 
 ```
-cd hadoop-on-docker
+cd spark-on-yarn
 sudo ./start-container.sh 6
 ```
