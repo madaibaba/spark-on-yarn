@@ -17,7 +17,7 @@ SPARK_HOME=/usr/local/spark
 sudo docker rm -f hadoop-master &> /dev/null
 echo "start hadoop-master container..."
 sudo docker run -itd \
-                --net=bridge \
+                --net=mybridge \
                 -p 50070:50070 \
                 -p 8088:8088 \
                 -p 18080:18080 \
@@ -34,7 +34,7 @@ do
 	sudo docker rm -f hadoop-slave$i &> /dev/null
 	echo "start hadoop-slave$i container..."
 	sudo docker run -itd \
-	                --net=bridge \
+	                --net=mybridge \
 	                --name hadoop-slave$i \
 	                --hostname hadoop-slave$i \
 	                madaibaba/spark-on-yarn:1.0 &> /dev/null
