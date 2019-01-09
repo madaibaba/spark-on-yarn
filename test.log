@@ -1,0 +1,25 @@
+cat > /root/test.csv << EOF
+1,a
+2,b
+3,c
+4,d
+5,e
+6,f
+7,g
+8,h
+9,i
+10,k
+EOF
+
+hdfs dfs -put /root/test.csv /tmp
+
+val test = spark.read.option("header", "false").option("delimiter", ",").csv("hdfs://hadoop-master:9000/tmp/test.csv")
+test.coalesce(2).write.parquet("hdfs://hadoop-master:9000/user/root/warehouse/test")
+
+val test = spark.read.parquet("hdfs://hadoop-master:9000/user/root/warehouse/test")
+println(test.count)
+test.show()
+
+test.coalesce(2).write.mode("append").parquet("hdfs://hadoop-master:9000/user/root/warehouse/test")
+
+hadoop jar $SPARK_HOME/jars/parquet-tools-1.9.0.jar merge hdfs://hadoop-master:9000/user/root/warehouse/test hdfs://hadoop-master:9000/tmp/test.parquet

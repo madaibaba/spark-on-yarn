@@ -18,17 +18,21 @@ RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
 RUN echo 'root:123456'|chpasswd
 EXPOSE 22
 
-# install hadoop 2.7.5
-RUN wget https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-2.7.5/hadoop-2.7.5.tar.gz && \
-    tar -xzvf hadoop-2.7.5.tar.gz && \
-    mv hadoop-2.7.5 /usr/local/hadoop && \
-    rm hadoop-2.7.5.tar.gz
+# install hadoop 2.7.6
+RUN wget https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-2.7.6/hadoop-2.7.6.tar.gz && \
+    tar -xzvf hadoop-2.7.6.tar.gz && \
+    mv hadoop-2.7.6 /usr/local/hadoop && \
+    rm hadoop-2.7.6.tar.gz
 
-# install spark 2.2.1
-RUN wget http://mirrors.tuna.tsinghua.edu.cn/apache/spark/spark-2.2.1/spark-2.2.1-bin-hadoop2.7.tgz && \
-    tar -xzvf spark-2.2.1-bin-hadoop2.7.tgz && \
-    mv spark-2.2.1-bin-hadoop2.7 /usr/local/spark && \
-    rm spark-2.2.1-bin-hadoop2.7.tgz
+# install spark 2.2.2
+RUN wget http://mirrors.tuna.tsinghua.edu.cn/apache/spark/spark-2.2.2/spark-2.2.2-bin-hadoop2.7.tgz && \
+    tar -xzvf spark-2.2.2-bin-hadoop2.7.tgz && \
+    mv spark-2.2.2-bin-hadoop2.7 /usr/local/spark && \
+    rm spark-2.2.2-bin-hadoop2.7.tgz
+
+# install parquet-tools-1.9.0
+RUN wget http://maven.aliyun.com/nexus/content/groups/public/org/apache/parquet/parquet-tools/1.9.0/parquet-tools-1.9.0.jar && \
+    mv parquet-tools-1.9.0.jar /usr/local/spark/jars
 
 # set environment variable
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
@@ -49,8 +53,8 @@ ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$SPARK_HOME/bin:$SPARK_HOME/sb
 RUN ssh-keygen -t rsa -f ~/.ssh/id_rsa -P '' && \
     cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 
-RUN mkdir -p ~/hdfs/namenode && \ 
-    mkdir -p ~/hdfs/datanode && \
+RUN mkdir -p /data/hdfs/namenode && \ 
+    mkdir -p /data/hdfs/datanode && \
     mkdir $HADOOP_HOME/logs && \
 	mkdir /tmp/hadoop && \
 	mkdir /tmp/spark
@@ -67,7 +71,10 @@ RUN mv /tmp/hadoop/ssh_config ~/.ssh/config && \
     mv /tmp/hadoop/stop-hadoop.sh ~/stop-hadoop.sh && \
     mv /tmp/hadoop/run-wordcount.sh ~/run-wordcount.sh
 
-RUN chmod +x ~/start-hadoop.sh && \
+RUN chown -R root:root $HADOOP_HOME && \
+    chown -R root:root $SPARK_HOME && \
+    chown root:root ~/*.sh && \
+    chmod +x ~/start-hadoop.sh && \
     chmod +x ~/stop-hadoop.sh && \
     chmod +x ~/run-wordcount.sh && \
     chmod +x $HADOOP_HOME/sbin/start-dfs.sh && \
@@ -77,10 +84,12 @@ RUN chmod +x ~/start-hadoop.sh && \
 COPY config/spark/* /tmp/spark/
 
 RUN mv /tmp/spark/spark-env.sh $SPARK_HOME/conf/spark-env.sh && \
+    mv /tmp/spark/spark-defaults.conf $SPARK_HOME/conf/spark-defaults.conf && \
     mv /tmp/spark/start-spark.sh ~/start-spark.sh && \
     mv /tmp/spark/stop-spark.sh ~/stop-spark.sh
 
-RUN chmod +x ~/start-spark.sh && \
+RUN chown root:root ~/*.sh && \
+    chmod +x ~/start-spark.sh && \
     chmod +x ~/stop-spark.sh && \
     chmod +x $SPARK_HOME/sbin/start-all.sh && \
     chmod +x $SPARK_HOME/sbin/stop-all.sh 

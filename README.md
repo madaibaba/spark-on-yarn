@@ -13,7 +13,7 @@ git clone https://github.com/madaibaba/spark-on-yarn
 #### 2. Pull Docker Image
 
 ```
-sudo docker pull madaibaba/spark-on-yarn:1.0
+sudo docker pull madaibaba/spark-on-yarn:2.0
 ```
 
 #### 3. Create My Bridge Network
