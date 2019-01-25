@@ -1,28 +1,54 @@
 cat > /root/test.csv << EOF
-1,a
-2,b
-3,c
-4,d
-5,e
-6,f
-7,g
-8,h
-9,i
-10,k
+id,name,addr,oper,cdate
+1,a,alex,i,2010-01-01 00:00:00
+2,b,alex,i,2010-01-01 00:00:00
+3,c,alex,i,2010-01-01 00:00:00
+4,d,alex,i,2010-01-01 00:00:00
+5,e,alex,i,2010-01-01 00:00:00
+6,f,alex,i,2010-01-01 00:00:00
+7,g,alex,i,2010-01-01 00:00:00
+8,h,alex,i,2010-01-01 00:00:00
+9,i,alex,i,2010-01-01 00:00:00
+10,k,alex,i,2010-01-01 00:00:00
 EOF
 
 hdfs dfs -put /root/test.csv /tmp
 
-val test = spark.read.option("header", "false").option("delimiter", ",").csv("hdfs://hadoop-master:9000/tmp/test.csv")
+cat > /root/testn.csv << EOF
+id,name,addr,oper,cdate
+4,z,SH,i,2010-01-02 00:00:00
+5,z,SH,i,2010-01-02 00:00:00
+6,z,SH,i,2010-01-02 00:00:00
+7,z,SH,d,2010-01-02 00:00:00
+EOF
+
+hdfs dfs -put /root/testn.csv /tmp
+
+
+
+val test = spark.read.option("header", "true").option("delimiter", ",").csv("hdfs://hadoop-master:9000/tmp/test.csv")
 test.coalesce(2).write.parquet("hdfs://hadoop-master:9000/user/root/warehouse/test")
 
 val test = spark.read.parquet("hdfs://hadoop-master:9000/user/root/warehouse/test")
 println(test.count)
 test.show()
 
+val test = spark.read.option("header", "true").option("delimiter", ",").csv("hdfs://hadoop-master:9000/tmp/testn.csv")
 test.coalesce(2).write.mode("append").parquet("hdfs://hadoop-master:9000/user/root/warehouse/test")
 
-hadoop jar $SPARK_HOME/jars/parquet-tools-1.9.0.jar merge hdfs://hadoop-master:9000/user/root/warehouse/test hdfs://hadoop-master:9000/tmp/test.parquet
+val test = spark.read.parquet("hdfs://hadoop-master:9000/user/root/warehouse/test")
+println(test.count)
+test.show()
+
+test.createGlobalTempView("test")
+spark.sql("select * from global_temp.test").show()
+
+
+
+hadoop jar $SPARK_HOME/jars/parquet-tools-1.10.0.jar merge hdfs://hadoop-master:9000/user/root/warehouse/test hdfs://hadoop-master:9000/tmp/test.parquet
 
 start-thriftserver.sh  --hiveconf hive.server2.thrift.port=10000
 beeline -u jdbc:hive2://hadoop-master:10000/default
+
+
+

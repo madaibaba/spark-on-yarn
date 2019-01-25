@@ -24,15 +24,15 @@ RUN wget https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-2.7.6/
     mv hadoop-2.7.6 /usr/local/hadoop && \
     rm hadoop-2.7.6.tar.gz
 
-# install spark 2.2.2
-RUN wget http://mirrors.tuna.tsinghua.edu.cn/apache/spark/spark-2.2.2/spark-2.2.2-bin-hadoop2.7.tgz && \
-    tar -xzvf spark-2.2.2-bin-hadoop2.7.tgz && \
-    mv spark-2.2.2-bin-hadoop2.7 /usr/local/spark && \
-    rm spark-2.2.2-bin-hadoop2.7.tgz
+# install spark 2.4.0
+RUN wget http://mirrors.tuna.tsinghua.edu.cn/apache/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz && \
+    tar -xzvf spark-2.4.0-bin-hadoop2.7.tgz && \
+    mv spark-2.4.0-bin-hadoop2.7 /usr/local/spark && \
+    rm spark-2.4.0-bin-hadoop2.7.tgz
 
-# install parquet-tools-1.9.0
-RUN wget http://maven.aliyun.com/nexus/content/groups/public/org/apache/parquet/parquet-tools/1.9.0/parquet-tools-1.9.0.jar && \
-    mv parquet-tools-1.9.0.jar /usr/local/spark/jars
+# install parquet-tools-1.10.0
+RUN wget http://maven.aliyun.com/nexus/content/groups/public/org/apache/parquet/parquet-tools/1.10.0/parquet-tools-1.10.0.jar && \
+    mv parquet-tools-1.10.0.jar /usr/local/spark/jars
 
 # set environment variable
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
