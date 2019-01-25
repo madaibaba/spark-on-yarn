@@ -48,7 +48,5 @@ spark.sql("select * from global_temp.test").show()
 hadoop jar $SPARK_HOME/jars/parquet-tools-1.10.0.jar merge hdfs://hadoop-master:9000/user/root/warehouse/test hdfs://hadoop-master:9000/tmp/test.parquet
 
 start-thriftserver.sh  --hiveconf hive.server2.thrift.port=10000
-beeline -u jdbc:hive2://hadoop-master:10000/default
-
-
+beeline --hiveconf hive.server2.thrift.port=10000 -u jdbc:hive2://hadoop-master:10000/default 
 
