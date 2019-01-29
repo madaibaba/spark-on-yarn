@@ -40,13 +40,25 @@ val test = spark.read.parquet("hdfs://hadoop-master:9000/user/root/warehouse/tes
 println(test.count)
 test.show()
 
-test.createGlobalTempView("test")
-spark.sql("select * from global_temp.test").show()
+test.createGlobalTempView("gtest")
+spark.sql("select * from global_temp.gtest").show()
 
+test.registerTempTable("ttest")
+spark.sql("select * from ttest").show()
+
+spark.sql("create external table etest (id int, name string, addr string, oper string, cdate string) stored as parquet location 'hdfs://hadoop-master:9000/user/root/warehouse/etest'").show()
+spark.sql("insert into etest select * from ttest").show()
+spark.sql("select * from etest").show()
+
+test.write.mode("overwrite").saveAsTable("ptest")
+spark.sql("select * from ptest").show()
+
+test.write.mode("append").saveAsTable("ptest")
+spark.sql("select * from ptest").show()
 
 
 hadoop jar $SPARK_HOME/jars/parquet-tools-1.10.0.jar merge hdfs://hadoop-master:9000/user/root/warehouse/test hdfs://hadoop-master:9000/tmp/test.parquet
 
 start-thriftserver.sh  --hiveconf hive.server2.thrift.port=10000
-beeline --hiveconf hive.server2.thrift.port=10000 -u jdbc:hive2://hadoop-master:10000/default 
+beeline -u jdbc:hive2://hadoop-master:10000/default 
 
