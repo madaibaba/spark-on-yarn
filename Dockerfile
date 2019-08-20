@@ -18,17 +18,17 @@ RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
 RUN echo 'root:123456'|chpasswd
 EXPOSE 22
 
-# install hadoop 2.7.6
-RUN wget https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-2.7.6/hadoop-2.7.6.tar.gz && \
-    tar -xzvf hadoop-2.7.6.tar.gz && \
-    mv hadoop-2.7.6 /usr/local/hadoop && \
-    rm hadoop-2.7.6.tar.gz
+# install hadoop 2.8.5
+RUN wget https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-2.8.5/hadoop-2.8.5.tar.gz && \
+    tar -xzvf hadoop-2.8.5.tar.gz && \
+    mv hadoop-2.8.5 /usr/local/hadoop && \
+    rm hadoop-2.8.5.tar.gz
 
-# install spark 2.4.0
-RUN wget http://mirrors.tuna.tsinghua.edu.cn/apache/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz && \
-    tar -xzvf spark-2.4.0-bin-hadoop2.7.tgz && \
-    mv spark-2.4.0-bin-hadoop2.7 /usr/local/spark && \
-    rm spark-2.4.0-bin-hadoop2.7.tgz
+# install spark 2.4.3
+RUN wget http://mirrors.tuna.tsinghua.edu.cn/apache/spark/spark-2.4.3/spark-2.4.3-bin-hadoop2.7.tgz && \
+    tar -xzvf spark-2.4.3-bin-hadoop2.7.tgz && \
+    mv spark-2.4.3-bin-hadoop2.7 /usr/local/spark && \
+    rm spark-2.4.3-bin-hadoop2.7.tgz
 
 # install parquet-tools-1.10.0
 RUN wget http://maven.aliyun.com/nexus/content/groups/public/org/apache/parquet/parquet-tools/1.10.0/parquet-tools-1.10.0.jar && \

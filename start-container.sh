@@ -24,7 +24,7 @@ sudo docker run -itd \
                 -p 10022:22 \
                 --name hadoop-master \
                 --hostname hadoop-master \
-                madaibaba/spark-on-yarn:2.0 &> /dev/null
+                madaibaba/spark-on-yarn:3.0 &> /dev/null
 
 
 # start hadoop slave container
@@ -37,7 +37,7 @@ do
 	                --net=mybridge \
 	                --name hadoop-slave$i \
 	                --hostname hadoop-slave$i \
-	                madaibaba/spark-on-yarn:2.0 &> /dev/null
+	                madaibaba/spark-on-yarn:3.0 &> /dev/null
 	i=$(( $i + 1 ))
 done 
 
