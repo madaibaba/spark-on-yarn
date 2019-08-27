@@ -62,3 +62,33 @@ hadoop jar $SPARK_HOME/jars/parquet-tools-1.10.0.jar merge hdfs://hadoop-master:
 start-thriftserver.sh  --hiveconf hive.server2.thrift.port=10000
 beeline -u jdbc:hive2://hadoop-master:10000/default 
 
+
+
+cat > test.csv << EOF
+id,name,addr,oper,cdate
+1,a,alex,i,2010-01-01
+2,b,alex,i,2010-01-01
+3,c,alex,i,2010-01-01
+4,d,alex,i,2010-01-01
+5,e,alex,i,2010-01-01
+6,f,alex,i,2010-01-01
+7,g,alex,i,2010-01-01
+8,h,alex,i,2010-01-01
+9,i,alex,i,2010-01-01
+1,aa,alex,i,2010-01-02
+EOF
+
+hdfs dfs -put test.csv /tmp
+
+val test = spark.read.option("header", "true").option("delimiter", ",").csv("hdfs://OraDB:9000/tmp/test.csv")
+
+test.write.parquet("hdfs://OraDB:9000/user/oracle/warehouse/test")
+
+val test = spark.read.parquet("hdfs://OraDB:9000/user/oracle/warehouse/test")
+
+spark.sql("create external table test (id string, name string, addr string, oper string, cdate string) stored as parquet location 'hdfs://OraDB:9000/user/oracle/warehouse/test'").show()
+
+spark.sql("create view vtest as select id, name, addr, oper, cdate from (select id, name, addr, oper, cdate, row_number() over (partition by id order by cdate desc) rank from test) as t where t.rank=1 and t.oper='i'").show()
+
+spark.sql("select * from vtest").show()
+
